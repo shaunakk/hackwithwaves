@@ -8,8 +8,8 @@ import {
 } from 'react-router-dom'
 export const auth = {
     isAuthenticated: false,
-    authenticate(cb, privateKey) {
-        this.privateKey = privateKey;
+    authenticate(cb) {
+        this.isAuthenticated = true
         setTimeout(cb, 100)
     },
     signout(cb) {
@@ -25,9 +25,6 @@ export const auth = {
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => {
-        if (auth.ledger || localStorage.getItem("ledger")) {
-
-        }
         if (auth.isAuthenticated) {
             return (<Component {...props} />)
 

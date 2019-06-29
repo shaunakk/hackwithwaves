@@ -42,13 +42,6 @@ const LogoutButton = withRouter(({ history }) => (
         auth.signout(() => history.push('/login'))
     }}>Sign out</MenuItem>
 ))
-
-const RetireTokensButton = withRouter(({ history }) => (
-    <MenuItem onClick={() => {
-        history.push('/retire')
-    }}>Retire Tokens</MenuItem>
-))
-
 class MenuBar extends React.Component {
     state = {
         anchorEl: null,

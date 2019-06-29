@@ -6,8 +6,6 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
-import Investor from './Investor';
-import Hacker from './Hacker'
 
 
 const theme = createMuiTheme({
@@ -40,7 +38,7 @@ class Home extends React.Component {
         const { classes } = this.props;
         return (
             <MuiThemeProvider style={{ display: "flex" }} theme={theme}>
-                {(localStorage.getItem("hacker") == "true") ? <Hacker /> : <Investor />}
+                <MenuBar title="Investor Wallet"></MenuBar>
             </MuiThemeProvider >
         );
     }

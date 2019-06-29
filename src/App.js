@@ -10,6 +10,7 @@ function App() {
 
   return (
     <Router>
+      <PrivateRoute exact path="/wallet" component={Home} />
       <PrivateRoute exact path="/" component={Home} />
       <Route exact path="/login" component={Login} />
     </Router>
