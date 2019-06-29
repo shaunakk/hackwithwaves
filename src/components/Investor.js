@@ -7,7 +7,6 @@ import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
 
-
 const theme = createMuiTheme({
     palette: {
         primary: { 500: "#43a047" },

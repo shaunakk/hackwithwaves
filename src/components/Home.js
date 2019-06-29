@@ -38,6 +38,7 @@ class Home extends React.Component {
 
     render() {
         const { classes } = this.props;
+        console.log(localStorage.acct)
         return (
             <MuiThemeProvider style={{ display: "flex" }} theme={theme}>
                 {(localStorage.getItem("hacker") == "true") ? <Hacker /> : <Investor />}

@@ -20,6 +20,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Switch from '@material-ui/core/Switch';
+
 import {
     BrowserRouter as Router,
     Route,
@@ -28,7 +29,8 @@ import {
     withRouter
 } from 'react-router-dom'
 import { auth } from './PrivateRoute'
-let privateKey = '';
+const WavesAPI = require('@waves/waves-api')
+const Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
 const theme = createMuiTheme({
     palette: {
         primary: { 500: "#1E88E5" },
@@ -78,10 +80,19 @@ class Login extends React.Component {
         type: "hacker"
     }
     async wavesKeeperLogin() {
-        const keeperApi = await window.WavesKeeper.initialPromise
-        const state = await keeperApi.publicState()
-        console.log(state);
-        localStorage.setItem("acct", JSON.stringify(state))
+        try {
+            const keeperApi = await window.WavesKeeper.initialPromise
+            const state = await keeperApi.publicState()
+            console.log(state);
+            let acct = { info: state }
+            acct.balances = await Waves.API.Node.assets.balances(state.account.address);
+            localStorage.setItem("acct", JSON.stringify(acct));
+            return true;
+        }
+        catch (e) {
+            console.log(e);
+            return false;
+        }
     }
     render() {
         const { classes } = this.props;
@@ -89,10 +100,9 @@ class Login extends React.Component {
             this.setState({ type: event.target.value });
         }
         const LoginButton = withRouter(({ history }) => (
-
-            <Button fullWidth variant="contained" color="primary" className={classes.submit} onClick={() => {
+            <Button fullWidth variant="contained" color="primary" className={classes.submit} onClick={async () => {
                 localStorage.setItem("hacker", (this.state.type == "hacker"));
-                this.wavesKeeperLogin()
+                await this.wavesKeeperLogin()
                 auth.authenticate(() => history.push('/wallet'))
             }}
             >{"Login as " + this.state.type}</Button >
