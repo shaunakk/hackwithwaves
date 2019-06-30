@@ -25,7 +25,7 @@ import Grid from '@material-ui/core/Grid';
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
 import AlertDialog from './AlertDialog';
-const { invokeScript } = require('@waves/waves-transactions')
+const { transfer, broadcast } = require('@waves/waves-transactions')
 const WavesAPI = require('@waves/waves-api')
 const Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
 const txData = {
@@ -108,6 +108,7 @@ class Home extends React.Component {
 
             };
             let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+
         }
         catch (e) {
             console.log(e);
@@ -151,7 +152,6 @@ class Home extends React.Component {
         }
     }
     async getProjects() {
-        console.log("start")
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
         let filtered = (res.filter(project => {
             try { return JSON.parse(project.value).name != "" }
@@ -165,13 +165,26 @@ class Home extends React.Component {
                 (project.value.name + project.value.description).toLowerCase().includes(this.state.search.toLowerCase())
             )
         });
-        console.log(filtered)
     }
 
     async componentDidMount() {
         await this.getProjects();
         await this.refreshProjects();
         this.setState({ filteredResponse: this.state.projects })
+        console.log("address " + JSON.parse(localStorage.acct).info.account.address
+        )
+        const params = {
+            amount: 500,
+            recipient: JSON.parse(localStorage.acct).info.account.address,
+            feeAssetId: "WAVES",
+            fee: 900000,
+            assetId: "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge",
+
+        }
+
+        const signedTransferTx = transfer(params, "satoshi hill advance update tongue design recall uniform method fun bone math february phrase little")
+        let res = await broadcast(signedTransferTx, "https://testnodes.wavesnodes.com")
+        console.log("You have just been awarded 5 HACKS")
     }
     render() {
         const { classes } = this.props;
@@ -201,7 +214,6 @@ class Home extends React.Component {
                 this.setState({
                     filteredResponse: responses
                 })
-                console.log(responses)
             }
             else this.setState({ filteredResponse: this.state.projects })
 
