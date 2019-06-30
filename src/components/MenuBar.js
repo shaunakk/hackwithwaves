@@ -62,6 +62,16 @@ const TransferButton = withRouter(({ history }) => (
         history.push('/transfer')
     }}>Send/Receive</MenuItem>
 ))
+const GiveButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/give')
+    }}>Give Advice</MenuItem>
+))
+const GetButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/get')
+    }}>Get Advice</MenuItem>
+))
 class MenuBar extends React.Component {
     state = {
         anchorEl: null,
@@ -102,6 +112,7 @@ class MenuBar extends React.Component {
                                         <WalletButton />
                                         <TransferButton />
                                         {(localStorage.getItem("hacker") == "true") ? <ProjectsButton /> : <InvestmentsButton />}
+                                        {(localStorage.getItem("hacker") == "true") ? <GetButton/> : <GiveButton/>}
                                         <LogoutButton />
                                     </Menu>
                                 </div>
