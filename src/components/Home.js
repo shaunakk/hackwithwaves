@@ -44,13 +44,13 @@ class Home extends React.Component {
     }
     state = {
         transactionHistory: [],
-        types:["","","","Issued","Transfered","Reissued","Burned","Exchanged","Leased","Canceled Lease","Alias","Mass Transfered", "Data", "Set Script","Set Sponsorship", "Set Asset Script", "Script Invocation"]
+        types: ["", "", "", "Issued", "Transferred", "Reissued", "Burned", "Exchanged", "Leased", "Canceled Lease", "Alias", "Mass Transfered", "Data", "Set Script", "Set Sponsorship", "Set Asset Script", "Script Invocation"]
     }
 
-    componentDidMount(){
+    componentDidMount() {
         Waves.API.Node.transactions.getList(JSON.parse(localStorage.acct).info.account.address).then((txList) => {
             console.log(txList);
-            this.setState({transactionHistory:txList})
+            this.setState({ transactionHistory: txList })
         });
     }
 
@@ -59,42 +59,42 @@ class Home extends React.Component {
         console.log(localStorage.acct)
         return (
             <div>
-            <div>
-                 <MenuBar
-                    title={localStorage.getItem("hacker") == "true"?"Hacker Wallet" : "Investor Wallet"}
-                    auth={false}
-                />
-                <Balances />
-                <br/>
-                <br/>
-            </div>
+                <div>
+                    <MenuBar
+                        title={localStorage.getItem("hacker") == "true" ? "Hacker Wallet" : "Investor Wallet"}
+                        auth={false}
+                    />
+                    <Balances />
+                    <br />
+                    <br />
+                </div>
 
-{this.state.transactionHistory.map(i =>
-<div>
-<Card className={classes.card}>
-    <CardContent className="transaction-container">
-        { i.sender == "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv" && i.assetId == "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge" ?  <Typography margin="0 20px" variant="h5" component="h2">Reward</Typography> :
-        <Typography margin="0 20px" variant="h5" component="h2">{this.state.types[i.type]} </Typography> 
-       
-        }
-        <Typography margin="0 20px" variant="h5" component="h2" gutterBottom>{moment(i.timestamp).format('MMMM Do YYYY, h:mm:ss a')} </Typography>
-        {i.amount ?
-        <Typography margin="0 20px" variant="h5" component="h2">Amount: {i.assetId == "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge" ? i.amount/100 + " HACK" : i.amount/100000000 + " WAVES"}</Typography>
-        : <Typography margin="0 20px" variant="h5" component="h2">Amount: None</Typography>
-        }
-        <AlertDialogSlide
-            id={i.id}
-            sender={i.sender}
-            fee={i.fee/100000000}
-            date={moment(i.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
-            recipient={i.recipient ? i.recipient : "none"}
-        ></AlertDialogSlide>
-    </CardContent>
-</Card>
-<br />
-</div>
-)}
-</div>
+                {this.state.transactionHistory.map(i =>
+                    <div>
+                        <Card className={classes.card}>
+                            <CardContent className="transaction-container">
+                                {i.sender == "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv" && i.assetId == "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge" ? <Typography margin="0 20px" variant="h5" component="h2">Reward</Typography> :
+                                    <Typography margin="0 20px" variant="h5" component="h2">{this.state.types[i.type]} </Typography>
+
+                                }
+                                <Typography margin="0 20px" variant="h5" component="h2" gutterBottom>{moment(i.timestamp).format('MMMM Do YYYY, h:mm:ss a')} </Typography>
+                                {i.amount ?
+                                    <Typography margin="0 20px" variant="h5" component="h2">Amount: {i.assetId == "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge" ? i.amount / 100 + " HACK" : i.amount / 100000000 + " WAVES"}</Typography>
+                                    : <Typography margin="0 20px" variant="h5" component="h2">Amount: None</Typography>
+                                }
+                                <AlertDialogSlide
+                                    id={i.id}
+                                    sender={i.sender}
+                                    fee={i.fee / 100000000}
+                                    date={moment(i.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
+                                    recipient={i.recipient ? i.recipient : "none"}
+                                ></AlertDialogSlide>
+                            </CardContent>
+                        </Card>
+                        <br />
+                    </div>
+                )}
+            </div>
 
         );
     }

@@ -105,7 +105,7 @@ class Home extends React.Component {
                     },
                     call: {
                         function: "project",
-                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ name: this.state.name, description: this.state.description, email: this.state.email, address: JSON.parse(localStorage.acct).info.account.address }) }]
+                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ name: this.state.name, description: this.state.description, email: this.state.email, url: this.state.url, address: JSON.parse(localStorage.acct).info.account.address }) }]
                     },
 
                 },
@@ -214,6 +214,9 @@ class Home extends React.Component {
         const handleChange3 = (event) => {
             this.setState({ email: event.target.value });
         }
+        const handleChange5 = (event) => {
+            this.setState({ url: event.target.value });
+        }
         const handleChange4 = async (event) => {
             this.setState({ search: event.target.value });
             if (event.target.value.length > 1) {
@@ -313,6 +316,15 @@ class Home extends React.Component {
                                 onChange={handleChange3}
                                 fullWidth
                             />
+                            <TextField
+                                margin="dense"
+                                id="url"
+                                label="App URL"
+                                type="text"
+                                value={this.state.url}
+                                onChange={handleChange5}
+                                fullWidth
+                            />
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
@@ -350,7 +362,7 @@ class Home extends React.Component {
                                         }}>
                                             Delete
                                         </Button>
-                                        <AlertDialog name={project.value.name} description={project.value.description} address={project.value.address} email={project.value.email} color="primary"></AlertDialog>
+                                        <AlertDialog url={project.value.url} name={project.value.name} description={project.value.description} address={project.value.address} email={project.value.email} color="primary"></AlertDialog>
                                     </CardActions>
                                 </Card>
                             </div>

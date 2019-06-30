@@ -14,6 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { auth } from './PrivateRoute'
+import logo from '../hi.png'
 
 import {
     BrowserRouter as Router,
@@ -92,6 +93,7 @@ class MenuBar extends React.Component {
                 <MuiThemeProvider theme={theme}>
                     <AppBar position="static">
                         <Toolbar>
+                            <img src={logo} height='30' width='42' />
                             <Typography variant="h6" color="inherit">{this.props.title}</Typography>
                             {auth.isAuthenticated && (
                                 <div className={classes.alignRight}>
@@ -112,7 +114,7 @@ class MenuBar extends React.Component {
                                         <WalletButton />
                                         <TransferButton />
                                         {(localStorage.getItem("hacker") == "true") ? <ProjectsButton /> : <InvestmentsButton />}
-                                        {(localStorage.getItem("hacker") == "true") ? <GetButton/> : <GiveButton/>}
+                                        {(localStorage.getItem("hacker") == "true") ? <GetButton /> : <GiveButton />}
                                         <LogoutButton />
                                     </Menu>
                                 </div>

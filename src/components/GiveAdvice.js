@@ -232,7 +232,6 @@ class Transfer extends React.Component {
           this.setState({ deposit: true })
         }}
       >
-        {" "}
         Deposit
         </Button>
     ));

@@ -27,18 +27,18 @@ class Balance extends React.Component {
 
     render() {
         let image;
-
+        let space = "      ";
         return (
             <MuiThemeProvider theme={theme}>
                 <Card className="balance" >
                     <CardContent>
                         <div class="asset-container">
                             <div class="asset" font-color="white">
-                                <img src={waves} alt="logo" class="icon" />
-                                {(parseInt(JSON.parse(localStorage.acct).info.account.balance.available) / (100000000)).toLocaleString() + " WAVES"}
+                                <img src={waves} alt="logo" width="50" height="50" />
+                                <p style={{ float: "left", "marginLeft": "10px" }}>{(parseInt(JSON.parse(localStorage.acct).info.account.balance.available) / (100000000)).toLocaleString().toString() + " WAVES"}</p>
                             </div>
                             <div class="asset" font-color="white">
-                                <img src={hack} alt="logo" class="icon" />
+                                <img src={hack} alt="logo" width="100" height="70" />
                                 {(parseInt(JSON.parse(localStorage.acct).balances.balances[0].balance) / (100)).toLocaleString() + " HACK"}
                             </div>
                         </div>
