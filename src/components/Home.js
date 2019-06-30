@@ -8,14 +8,10 @@ import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
 import Investor from './Investor';
 import Hacker from './Hacker'
+import Balances from './Balances';
 
 
-const theme = createMuiTheme({
-    palette: {
-        primary: { 500: "#43a047" },
-        secondary: blue
-    }
-})
+
 const styles = {
     card: {
         maxWidth: 1400,
@@ -40,9 +36,10 @@ class Home extends React.Component {
         const { classes } = this.props;
         console.log(localStorage.acct)
         return (
-            <MuiThemeProvider style={{ display: "flex" }} theme={theme}>
+            <div>
                 {(localStorage.getItem("hacker") == "true") ? <Hacker /> : <Investor />}
-            </MuiThemeProvider >
+                <Balances />
+            </div>
         );
     }
 }

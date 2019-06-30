@@ -42,6 +42,21 @@ const LogoutButton = withRouter(({ history }) => (
         auth.signout(() => history.push('/login'))
     }}>Sign out</MenuItem>
 ))
+const WalletButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/wallet')
+    }}>Wallet</MenuItem>
+))
+const ProjectsButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/projects')
+    }}>Projects</MenuItem>
+))
+const InvestmentsButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/projects')
+    }}>Investments</MenuItem>
+))
 class MenuBar extends React.Component {
     state = {
         anchorEl: null,
@@ -66,7 +81,6 @@ class MenuBar extends React.Component {
                             {auth.isAuthenticated && (
                                 <div className={classes.alignRight}>
                                     <IconButton
-
                                         aria-owns={open ? 'menu-appbar' : undefined}
                                         aria-haspopup="true"
                                         onClick={this.handleMenu}
@@ -80,6 +94,7 @@ class MenuBar extends React.Component {
                                         open={open}
                                         onClose={this.handleClose}
                                     >
+                                        {(localStorage.getItem("hacker") == "true") ? <ProjectsButton /> : <InvestmentsButton />}
                                         <LogoutButton></LogoutButton>
                                     </Menu>
                                 </div>

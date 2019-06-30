@@ -8,12 +8,7 @@ import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
 
 
-const theme = createMuiTheme({
-    palette: {
-        primary: { 500: "#43a047" },
-        secondary: blue
-    }
-})
+
 const styles = {
     card: {
         maxWidth: 1400,
@@ -37,9 +32,7 @@ class Home extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <MuiThemeProvider style={{ display: "flex" }} theme={theme}>
-                <MenuBar title="Hacker Wallet"></MenuBar>
-            </MuiThemeProvider >
+            <MenuBar title="Hacker Wallet"></MenuBar>
         );
     }
 }
