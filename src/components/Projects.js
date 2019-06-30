@@ -61,8 +61,14 @@ class Home extends React.Component {
     state = {
         projects: [],
         open: false,
+        name: "",
+        description: ""
     }
-    async createApp(name, description) {
+    refreshProjects() {
+        setInterval(() => { this.getProjects() }, 1000);
+    }
+    async createApp() {
+        console.log(this.state.name)
         try {
             const txData = {
                 type: 16,
@@ -75,8 +81,8 @@ class Home extends React.Component {
                         "assetId": "WAVES"
                     },
                     call: {
-                        function: "registerProject",
-                        args: [{ type: "string", value: name }, { type: "string", value: description }]
+                        function: "project",
+                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ name: this.state.name, description: this.state.description, email: this.state.email, address: JSON.parse(localStorage.acct).info.account.address }) }]
                     },
 
                 },
@@ -90,19 +96,54 @@ class Home extends React.Component {
             console.log(e);
         }
     }
+    async deleteProject(index) {
+        console.log(this.state.name)
+        try {
+            const txData = {
+                type: 16,
 
+                data: {
+                    dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
+                    payment: [],
+                    fee: {
+                        "tokens": "0.05",
+                        "assetId": "WAVES"
+                    },
+                    call: {
+                        function: "project",
+                        args: [{ type: "string", value: this.state.projects[index].key }, { type: "string", value: JSON.stringify({ name: "" }) }]
+                    },
+
+                },
+
+
+            };
+            let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+            console.log(data)
+            console.log("done")
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
     async getProjects() {
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
-        let projects = res.filter(project => {
-            return (project.key.includes("Description"))
-        })
+        console.log(res)
+        let filtered = (res.filter(project => {
+            try { return JSON.parse(project.value).name != "" }
+            catch{ return false }
+        }
+        )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
+        console.log("FILTERED")
+        console.log(filtered)
         this.setState({
-            projects: projects
+            projects: filtered
         });
     }
 
     componentDidMount() {
         this.getProjects();
+        this.refreshProjects();
     }
     render() {
         const { classes } = this.props;
@@ -111,6 +152,15 @@ class Home extends React.Component {
         }
         const handleClose = () => {
             this.setState({ open: false })
+        }
+        const handleChange1 = (event) => {
+            this.setState({ name: event.target.value });
+        }
+        const handleChange2 = (event) => {
+            this.setState({ description: event.target.value });
+        }
+        const handleChange3 = (event) => {
+            this.setState({ email: event.target.value });
         }
         return (
             <MuiThemeProvider theme={theme}>
@@ -125,15 +175,34 @@ class Home extends React.Component {
                         <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                To subscribe to this website, please enter your email address here. We will send updates
-                                occasionally.
+                                Please enter the name and a description of your hackathon project
                         </DialogContentText>
                             <TextField
                                 autoFocus
                                 margin="dense"
                                 id="name"
+                                label="Name"
+                                type="text"
+                                value={this.state.name}
+                                onChange={handleChange1}
+                                fullWidth
+                            />
+                            <TextField
+                                margin="dense"
+                                id="description"
+                                label="Description"
+                                type="text"
+                                value={this.state.description}
+                                onChange={handleChange2}
+                                fullWidth
+                            />
+                            <TextField
+                                margin="dense"
+                                id="email"
                                 label="Email Address"
                                 type="email"
+                                value={this.state.email}
+                                onChange={handleChange3}
                                 fullWidth
                             />
                         </DialogContent>
@@ -141,34 +210,39 @@ class Home extends React.Component {
                             <Button onClick={handleClose} color="primary">
                                 Cancel
                         </Button>
-                            <Button onClick={handleClose} color="primary">
+                            <Button onClick={async () => {
+                                await this.createApp()
+                                handleClose()
+                            }} color="primary">
                                 Create
                         </Button>
                         </DialogActions>
                     </Dialog>
                     <br />
                     {
-                        this.state.projects.map(project =>
+                        this.state.projects.map((project, index) =>
                             <div>
                                 <br />
                                 <Card className={classes.card}>
                                     <CardActionArea>
                                         <CardContent>
                                             <Typography gutterBottom variant="h5" component="h2">
-                                                {project.key.replace(" Description", "")}
+                                                {project.value.name}
                                             </Typography>
                                             <Typography variant="body2" color="textSecondary" component="p">
-                                                {project.value}
+                                                {project.value.description}
                                             </Typography>
                                         </CardContent>
                                     </CardActionArea>
                                     <CardActions>
-                                        <Button size="small" color="primary">
+                                        <Button size="small" color="primary" onClick={async () => {
+                                            await this.deleteProject(index)
+                                        }}>
                                             Delete
-                                    </Button>
+                                        </Button>
                                         <Button size="small" color="primary">
-                                            Select Item
-                                    </Button>
+                                            Select Project
+                                        </Button>
                                     </CardActions>
                                 </Card>
                             </div>

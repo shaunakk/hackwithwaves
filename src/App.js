@@ -6,6 +6,7 @@ import Home from './components/Home'
 import Login from './components/Login'
 import Projects from './components/Projects'
 import Transfer from './components/Transfer'
+import Investments from './components/Investor'
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <PrivateRoute exact path="/projects" component={Projects} />
       <PrivateRoute exact path="/wallet" component={Home} />
       <PrivateRoute exact path="/" component={Home} />
+      <PrivateRoute exact path="/investments" component={Investments} />
       <PrivateRoute exact path="/transfer" component={Transfer} />
       <Route exact path="/login" component={Login} />
     </Router>
