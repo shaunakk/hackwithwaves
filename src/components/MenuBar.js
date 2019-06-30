@@ -95,7 +95,8 @@ class MenuBar extends React.Component {
                                         onClose={this.handleClose}
                                     >
                                         {(localStorage.getItem("hacker") == "true") ? <ProjectsButton /> : <InvestmentsButton />}
-                                        <LogoutButton></LogoutButton>
+                                        <WalletButton />
+                                        <LogoutButton />
                                     </Menu>
                                 </div>
                             )}
