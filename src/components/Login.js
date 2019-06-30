@@ -105,7 +105,7 @@ class Login extends React.Component {
                 await this.wavesKeeperLogin()
                 auth.authenticate(() => history.push('/wallet'))
             }}
-            >{"Login as " + this.state.type}</Button >
+            >Login as {this.state.type == "investor" ? "an Investor" : "a Hacker"} </Button >
 
         ))
         return (

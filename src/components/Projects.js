@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { checkPropTypes } from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import blue from '@material-ui/core/colors/blue';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -11,6 +11,9 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,6 +22,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
+import AlertDialog from './AlertDialog';
 const { invokeScript } = require('@waves/waves-transactions')
 const WavesAPI = require('@waves/waves-api')
 const Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
@@ -62,10 +66,14 @@ class Home extends React.Component {
         projects: [],
         open: false,
         name: "",
-        description: ""
+        description: "",
+        error:false
     }
     refreshProjects() {
         setInterval(() => { this.getProjects() }, 1000);
+    }
+    handleErrorClose = () => {
+        this.setState({error:false})
     }
     async createApp() {
         console.log(this.state.name)
@@ -96,9 +104,14 @@ class Home extends React.Component {
             console.log(e);
         }
     }
-    async deleteProject(index) {
+
+
+
+    async deleteProject(project,index) {
         console.log(this.state.name)
+        
         try {
+            if(project.value.address == JSON.parse(localStorage.acct).info.account.address){
             const txData = {
                 type: 16,
 
@@ -121,8 +134,12 @@ class Home extends React.Component {
             let data = await window.WavesKeeper.signAndPublishTransaction(txData);
             console.log(data)
             console.log("done")
+        } else{
+            this.setState({error:true})
+        }
         }
         catch (e) {
+            this.setState({error:true})
             console.log(e);
         }
     }
@@ -187,6 +204,34 @@ class Home extends React.Component {
                                 onChange={handleChange1}
                                 fullWidth
                             />
+                             <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            open={this.state.error}
+                            autoHideDuration={8000}
+                            onClose={this.handleErrorClose}
+                            ContentProps={{
+                                'aria-describedby': 'message-id',
+                            }}
+                            message={
+
+                                <span id="message-id">Error! You Cannot Delete this Project</span>
+                            }
+                            action={[
+
+                                <IconButton
+                                    key="close"
+                                    aria-label="Close"
+                                    color="inherit"
+                                    className={classes.close}
+                                    onClick={this.handleErrorClose}
+                                >
+                                    <CloseIcon />
+                                </IconButton>,
+                            ]}
+                        />
                             <TextField
                                 margin="dense"
                                 id="description"
@@ -211,6 +256,7 @@ class Home extends React.Component {
                                 Cancel
                         </Button>
                             <Button onClick={async () => {
+                                
                                 await this.createApp()
                                 handleClose()
                             }} color="primary">
@@ -235,14 +281,12 @@ class Home extends React.Component {
                                         </CardContent>
                                     </CardActionArea>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={async () => {
-                                            await this.deleteProject(index)
+                                        <Button size="small" color="primary" onClick={async () => {    
+                                            await this.deleteProject(project,index)
                                         }}>
                                             Delete
                                         </Button>
-                                        <Button size="small" color="primary">
-                                            Select Project
-                                        </Button>
+                                        <AlertDialog name={project.value.name} description={project.value.description} address={project.value.address} email={project.value.email} color="primary"></AlertDialog>
                                     </CardActions>
                                 </Card>
                             </div>
