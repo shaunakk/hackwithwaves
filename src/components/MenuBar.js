@@ -54,8 +54,8 @@ const ProjectsButton = withRouter(({ history }) => (
 ))
 const InvestmentsButton = withRouter(({ history }) => (
     <MenuItem onClick={() => {
-        history.push('/investments')
-    }}>Investments</MenuItem>
+        history.push('/projectsToInvest')
+    }}>Projects</MenuItem>
 ))
 const TransferButton = withRouter(({ history }) => (
     <MenuItem onClick={() => {

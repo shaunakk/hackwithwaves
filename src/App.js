@@ -16,7 +16,7 @@ function App() {
       <PrivateRoute exact path="/projects" component={Projects} />
       <PrivateRoute exact path="/wallet" component={Home} />
       <PrivateRoute exact path="/" component={Home} />
-      <PrivateRoute exact path="/investments" component={Investments} />
+      <PrivateRoute exact path="/projectsToInvest" component={Investments} />
       <PrivateRoute exact path="/transfer" component={Transfer} />
       <Route exact path="/login" component={Login} />
     </Router>
