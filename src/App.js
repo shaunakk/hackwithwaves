@@ -7,6 +7,8 @@ import Login from './components/Login'
 import Projects from './components/Projects'
 import Transfer from './components/Transfer'
 import Investments from './components/Investor'
+import Give from './components/GiveAdvice'
+import Get from './components/GetAdvice'
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
       <PrivateRoute exact path="/" component={Home} />
       <PrivateRoute exact path="/projectsToInvest" component={Investments} />
       <PrivateRoute exact path="/transfer" component={Transfer} />
+      <PrivateRoute exact path="/give" component={Give} />
+      <PrivateRoute exact path="/get" component={Get} />
       <Route exact path="/login" component={Login} />
     </Router>
   );
