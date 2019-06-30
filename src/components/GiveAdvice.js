@@ -369,7 +369,7 @@ class Transfer extends React.Component {
             }}
             message={
 
-              <span id="message-id">Error! The email could not be sent</span>
+              <span id="message-id">Error! Your advice could not be sent</span>
             }
             action={[
 
