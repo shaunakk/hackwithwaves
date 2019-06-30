@@ -6,12 +6,9 @@
     "@material-ui/core": "^4.1.3",
     "@material-ui/icons": "^4.2.1",
     "@waves/waves-api": "^1.5.1",
-<<<<<<< HEAD
     "@waves/waves-transactions": "^3.10.3",
     "axios": "^0.19.0",
-=======
     "moment": "^2.24.0",
->>>>>>> 6ede417c29b5ad6308ca624d13f7478eb078acda
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.1",
