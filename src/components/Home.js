@@ -74,7 +74,7 @@ class Home extends React.Component {
         <Typography margin="0 20px" variant="h5" component="h2">{this.state.types[i.type]} </Typography>
         <Typography margin="0 20px" variant="h5" component="h2" gutterBottom>{moment(i.timestamp).format('MMMM Do YYYY, h:mm:ss a')} </Typography>
         {i.amount ?
-        <Typography margin="0 20px" variant="h5" component="h2">Amount: {i.amount/100000000}</Typography>
+        <Typography margin="0 20px" variant="h5" component="h2">Amount: {i.assetId == "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge" ? i.amount/100 + " HACK" : i.amount/100000000 + " WAVES"}</Typography>
         : <Typography margin="0 20px" variant="h5" component="h2">Amount: None</Typography>
         }
         <AlertDialogSlide

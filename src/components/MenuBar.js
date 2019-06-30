@@ -57,6 +57,11 @@ const InvestmentsButton = withRouter(({ history }) => (
         history.push('/projects')
     }}>Investments</MenuItem>
 ))
+const TransferButton = withRouter(({ history }) => (
+    <MenuItem onClick={() => {
+        history.push('/transfer')
+    }}>Send/Receive</MenuItem>
+))
 class MenuBar extends React.Component {
     state = {
         anchorEl: null,
@@ -94,6 +99,7 @@ class MenuBar extends React.Component {
                                         open={open}
                                         onClose={this.handleClose}
                                     >
+                                        <TransferButton></TransferButton>
                                         {(localStorage.getItem("hacker") == "true") ? <ProjectsButton /> : <InvestmentsButton />}
                                         <LogoutButton></LogoutButton>
                                     </Menu>
