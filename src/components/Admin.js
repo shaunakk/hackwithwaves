@@ -71,7 +71,7 @@ const theme = createMuiTheme({
 
     }
 })
-class Projects extends React.Component {
+class Admin extends React.Component {
     constructor() {
         super();
     }
@@ -107,7 +107,7 @@ class Projects extends React.Component {
                     },
                     call: {
                         function: "project",
-                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ person: false, update: false, name: this.state.name, description: this.state.description, email: this.state.email, url: this.state.url, address: JSON.parse(localStorage.acct).info.account.address }) }]
+                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ update: false, name: this.state.name, description: this.state.description, email: this.state.email, url: this.state.url, address: JSON.parse(localStorage.acct).info.account.address }) }]
                     },
 
                 },
@@ -139,35 +139,31 @@ class Projects extends React.Component {
 
 
 
-    async deleteProject(project, index) {
+    async removeStatus(project, index) {
 
         try {
-            if (project.value.address == JSON.parse(localStorage.acct).info.account.address) {
-                const txData = {
-                    type: 16,
-
-                    data: {
-                        dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
-                        payment: [],
-                        fee: {
-                            "tokens": "0.05",
-                            "assetId": "WAVES"
-                        },
-                        call: {
-                            function: "project",
-                            args: [{ type: "string", value: this.state.filteredResponse[index].key }, { type: "string", value: JSON.stringify({ name: "" }) }]
-                        },
-
+            const txData = {
+                type: 16,
+                data: {
+                    dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
+                    payment: [],
+                    fee: {
+                        "tokens": "0.05",
+                        "assetId": "WAVES"
+                    },
+                    call: {
+                        function: "project",
+                        args: [{ type: "string", value: this.state.filteredResponse[index].key }, { type: "string", value: JSON.stringify({ name: "" }) }]
                     },
 
+                },
 
-                };
-                let data = await window.WavesKeeper.signAndPublishTransaction(txData);
 
-            } else {
-                this.setState({ error: true })
-            }
+            };
+            let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+
         }
+
         catch (e) {
             this.setState({ error: true })
             console.log(e);
@@ -176,16 +172,13 @@ class Projects extends React.Component {
     async getProjects() {
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
         let filtered = (res.filter(project => {
-            try { return JSON.parse(project.value).name != "" }
+            try { return JSON.parse(project.value).name != "" && JSON.parse(project.value).update }
             catch{ return false }
         }
         )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
 
         this.setState({
             projects: filtered,
-            filteredResponse: filtered.filter(project =>
-                (project.value.name + project.value.description).toLowerCase().includes(this.state.search.toLowerCase())
-            )
         });
     }
 
@@ -240,112 +233,12 @@ class Projects extends React.Component {
             <MuiThemeProvider theme={theme}>
 
                 <div>
-                    <MenuBar title="Projects"></MenuBar>
+                    <MenuBar title="Admin Dashboard"></MenuBar>
                     <br />
-                    <Button variant="contained" className={classes.leftMargin} color="primary" onClick={handleClickOpen}>
-                        Create a Project
-                    </Button>
-                    <Grid container justify="center" >
-                        <TextField
-                            id="outlined-search-input"
-
-                            label="Search"
-                            type="search"
-                            name="search"
-                            autoComplete="search"
-                            margin="normal"
-                            variant="outlined"
-                            onChange={handleChange4}
-                        />
-                    </Grid>
-                    <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Please enter the name and a description of your hackathon project
-                        </DialogContentText>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                id="name"
-                                label="Name"
-                                type="text"
-                                value={this.state.name}
-                                onChange={handleChange1}
-                                fullWidth
-                            />
-                            <Snackbar
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                open={this.state.error}
-                                autoHideDuration={8000}
-                                onClose={this.handleErrorClose}
-                                ContentProps={{
-                                    'aria-describedby': 'message-id',
-                                }}
-                                message={
-
-                                    <span id="message-id">Error! You Cannot Delete this Project</span>
-                                }
-                                action={[
-
-                                    <IconButton
-                                        key="close"
-                                        aria-label="Close"
-                                        color="inherit"
-                                        className={classes.close}
-                                        onClick={this.handleErrorClose}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>,
-                                ]}
-                            />
-                            <TextField
-                                margin="dense"
-                                id="description"
-                                label="Description"
-                                type="text"
-                                value={this.state.description}
-                                onChange={handleChange2}
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="email"
-                                label="Email Address"
-                                type="email"
-                                value={this.state.email}
-                                onChange={handleChange3}
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="url"
-                                label="App URL"
-                                type="text"
-                                value={this.state.url}
-                                onChange={handleChange5}
-                                fullWidth
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose} color="primary">
-                                Cancel
-                        </Button>
-                            <Button onClick={async () => {
-
-                                await this.createApp()
-                                handleClose()
-                            }} color="primary">
-                                Create
-                        </Button>
-                        </DialogActions>
-                    </Dialog>
+                    <Typography style={{marginLeft:"50px"}}>Pending Updates:</Typography>
                     <br />
                     {
-                        this.state.filteredResponse.map((project, index) =>
+                        this.state.projects.map((project, index) =>
                             <div>
                                 <br />
                                 <Card className={classes.card} >
@@ -364,12 +257,39 @@ class Projects extends React.Component {
                                         <Button size="small" color="primary" onClick={async () => {
                                             await this.deleteProject(project, index)
                                         }}>
-                                            Delete
+                                            More Info
                                         </Button>
-                                        <AlertDialog url={project.value.url} name={project.value.name} description={project.value.description} address={project.value.address} email={project.value.email} color="primary"></AlertDialog>
                                         <Button size="small" color="primary" onClick={async () => {
                                             let updatedValue = this.state.filteredResponse[index].value
-                                            updatedValue.update = true
+                                            updatedValue.update = false
+                                            const txData = {
+                                                type: 16,
+
+                                                data: {
+                                                    dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
+                                                    payment: [],
+                                                    fee: {
+                                                        "tokens": "0.05",
+                                                        "assetId": "WAVES"
+                                                    },
+                                                    call: {
+                                                        function: "project",
+                                                        args: [{ type: "string", value: this.state.filteredResponse[index].key }, { type: "string", value: JSON.stringify(updatedValue) }]
+                                                    },
+
+                                                },
+
+
+                                            };
+                                            let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+                                            this.setState({ rewardOpen2: true })
+
+                                        }}>
+                                            Deny
+                                        </Button>
+                                        <Button size="small" color="primary" onClick={async () => {
+                                            let updatedValue = this.state.filteredResponse[index].value
+                                            updatedValue.update = false
                                             const txData = {
                                                 type: 16,
 
@@ -391,7 +311,7 @@ class Projects extends React.Component {
                                             };
                                             let data = await window.WavesKeeper.signAndPublishTransaction(txData);
                                             const params = {
-                                                amount: 500,
+                                                amount: 1000,
                                                 recipient: JSON.parse(localStorage.acct).info.account.address,
                                                 feeAssetId: "WAVES",
                                                 fee: 900000,
@@ -400,12 +320,11 @@ class Projects extends React.Component {
 
                                             const signedTransferTx = transfer(params, "satoshi hill advance update tongue design recall uniform method fun bone math february phrase little")
                                             let res = broadcast(signedTransferTx, "https://testnodes.wavesnodes.com").then(() => {
-                                                this.setState({ rewardOpen2: true })
+                                                this.setState({ rewardOpen: true })
                                             })
-                                            console.log("You have just been awarded 5 HACKS")
-                                            console.log("sent a code update request")
+
                                         }}>
-                                            Code Update
+                                            Accept
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -421,11 +340,11 @@ class Projects extends React.Component {
                         aria-describedby="alert-dialog-slide-description"
                     >
                         <DialogTitle id="alert-dialog-slide-title">
-                            Reward
+                            Accept Submitted
                     </DialogTitle>
                         <DialogContent>
                             <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
-                                <p>You have been rewarded 5 HACK for registering your project</p>
+                                <p>This project has been accepted, the user has recieved 10 HACKS</p>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -443,11 +362,11 @@ class Projects extends React.Component {
                         aria-describedby="alert-dialog-slide-description"
                     >
                         <DialogTitle id="alert-dialog-slide-title">
-                            Update Submitted
+                            Deny Submitted
                     </DialogTitle>
                         <DialogContent>
                             <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
-                                <p>If approved, you will be rewarded 10 HACKS for updating your project</p>
+                                <p>This project update has been denied</p>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -462,8 +381,8 @@ class Projects extends React.Component {
         );
     }
 }
-Projects.propTypes = {
+Admin.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Projects);
+export default withStyles(styles)(Admin);
