@@ -328,6 +328,7 @@ class Home extends React.Component {
                             }} color="primary">
                                 Create
                         </Button>
+                      
                         </DialogActions>
                     </Dialog>
                     <br />
@@ -349,7 +350,7 @@ class Home extends React.Component {
                                     </CardActionArea>
                                     <CardActions>
                                         <Button size="small" color="primary" onClick={async () => {
-                                            await this.deleteProject(project, index)
+                                            await this.deleteEntry(project, index)
                                         }}>
                                             Delete
                                         </Button>
