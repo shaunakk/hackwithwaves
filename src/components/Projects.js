@@ -176,7 +176,7 @@ class Projects extends React.Component {
     async getProjects() {
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
         let filtered = (res.filter(project => {
-            try { return JSON.parse(project.value).name != "" }
+            try { return JSON.parse(project.value).name != "" && !JSON.parse(project.value).person }
             catch{ return false }
         }
         )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })

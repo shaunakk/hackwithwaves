@@ -25,7 +25,7 @@ import Slide from '@material-ui/core/Slide';
 
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
-import AlertDialog from './AlertDialog';
+import AlertDialog from './AlertDialog2';
 const { transfer, broadcast } = require('@waves/waves-transactions')
 const WavesAPI = require('@waves/waves-api')
 const Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
@@ -86,7 +86,7 @@ class Home extends React.Component {
         rewardOpen: false
     }
     refreshProjects() {
-        setInterval(() => { this.getProjects() }, 1000);
+        setInterval(() => { this.getDirectory() }, 1000);
     }
     handleErrorClose = () => {
         this.setState({ error: false })
@@ -105,7 +105,7 @@ class Home extends React.Component {
                     },
                     call: {
                         function: "project",
-                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ name: this.state.name, description: this.state.description, email: this.state.email, url: this.state.url, address: JSON.parse(localStorage.acct).info.account.address }) }]
+                        args: [{ type: "string", value: this.state.name }, { type: "string", value: JSON.stringify({ person: true, name: this.state.name, description: this.state.description, email: this.state.email, address: JSON.parse(localStorage.acct).info.account.address }) }]
                     },
 
                 },
@@ -174,7 +174,7 @@ class Home extends React.Component {
     async getDirectory() {
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
         let filtered = (res.filter(project => {
-            try { return JSON.parse(project.value).name != "" }
+            try { return JSON.parse(project.value).name != "" && JSON.parse(project.value).person }
             catch{ return false }
         }
         )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
@@ -236,10 +236,10 @@ class Home extends React.Component {
             <MuiThemeProvider theme={theme}>
 
                 <div>
-                    <MenuBar title="Projects"></MenuBar>
+                    <MenuBar title="Directory"></MenuBar>
                     <br />
                     <Button variant="contained" className={classes.leftMargin} color="primary" onClick={handleClickOpen}>
-                        Create a Project
+                        Create your Bio
                     </Button>
                     <Grid container justify="center" >
                         <TextField
@@ -255,10 +255,10 @@ class Home extends React.Component {
                         />
                     </Grid>
                     <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
+                        <DialogTitle id="form-dialog-title">Create Bio</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Please enter the name and a description of your hackathon project
+                                Please enter your name, expertise, and email address
                         </DialogContentText>
                             <TextField
                                 autoFocus
@@ -301,7 +301,7 @@ class Home extends React.Component {
                             <TextField
                                 margin="dense"
                                 id="description"
-                                label="Description"
+                                label="Expertise"
                                 type="text"
                                 value={this.state.description}
                                 onChange={handleChange2}
@@ -314,15 +314,6 @@ class Home extends React.Component {
                                 type="email"
                                 value={this.state.email}
                                 onChange={handleChange3}
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="url"
-                                label="App URL"
-                                type="text"
-                                value={this.state.url}
-                                onChange={handleChange5}
                                 fullWidth
                             />
                         </DialogContent>
@@ -381,7 +372,7 @@ class Home extends React.Component {
                     </DialogTitle>
                         <DialogContent>
                             <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
-                                <p>You have been rewarded 1 HACK for registering your project</p>
+                                <p>You have been rewarded 1 HACK for registering your bio</p>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
