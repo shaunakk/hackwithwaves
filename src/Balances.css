@@ -1,0 +1,28 @@
+.balance {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 400px;
+    font-size: 50px;
+    background: 42cef5;
+    background: linear-gradient(0deg, rgb(103, 202, 230) 0%, rgb(53, 193, 232) 100%); 
+    margin: 50px;
+    color: white;
+}
+
+.asset-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.5em;
+}
+
+.icon {
+    width: 45px;
+    margin-right: 20px;
+}
+.asset {
+    display: flex;
+    align-items: center;
+    padding: 2%;
+}

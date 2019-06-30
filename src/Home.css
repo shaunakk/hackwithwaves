@@ -1,0 +1,12 @@
+.transaction-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.history-title {
+    text-align: center;
+    font-weight: normal;
+    font-size: 3em;
+    text-decoration: underline;
+}

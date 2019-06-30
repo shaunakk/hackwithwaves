@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import waves from '../waves.png';
 import hack from '../hack.png';
+import balance from '../Balances.css'
 
 const styles = () => ({
     largeArrow: {
@@ -32,13 +33,13 @@ class Balance extends React.Component {
                 <Card className="balance" >
                     <CardContent>
                         <div class="asset-container">
-                            <div class="asset">
+                            <div class="asset" font-color="white">
                                 <img src={waves} alt="logo" class="icon" />
-                                {parseInt(JSON.parse(localStorage.acct).info.account.balance.available) / (100000000) + " WAVES"}
+                                {(parseInt(JSON.parse(localStorage.acct).info.account.balance.available) / (100000000)).toLocaleString() + " WAVES"}
                             </div>
-                            <div class="asset">
+                            <div class="asset" font-color="white">
                                 <img src={hack} alt="logo" class="icon" />
-                                {parseInt(JSON.parse(localStorage.acct).balances.balances[0].balance) / (100) + " HACK"}
+                                {(parseInt(JSON.parse(localStorage.acct).balances.balances[0].balance) / (100)).toLocaleString() + " HACK"}
                             </div>
                         </div>
                     </CardContent>
