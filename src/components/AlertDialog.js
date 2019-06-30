@@ -67,7 +67,7 @@ class AlertDialog extends React.Component {
                         <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
                             <p>Project's Description: {this.props.description}</p>
                             <p>Project's URL: {this.props.url}</p>
-                            <p>Project's Investment ID: {this.props.address}</p>
+                            <p>Project's ID: {this.props.address}</p>
                             <p>Project's Email: {this.props.email}</p>
                           
 

@@ -266,7 +266,7 @@ class Transfer extends React.Component {
                   />
                 </FormControl>
                 <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="dest">Investor Email</InputLabel>
+                  <InputLabel htmlFor="dest">Advisor Email</InputLabel>
                   <Input
                     type="text"
                     id="dest"
