@@ -61,7 +61,7 @@ class Home extends React.Component {
             <div>
                 <div>
                     <MenuBar
-                        title={localStorage.getItem("hacker") == "true" ? "Hacker Wallet" : "Investor Wallet"}
+                        title={localStorage.getItem("hacker") == "true" ? "Hacker Wallet" : "Advisor Wallet"}
                         auth={false}
                     />
                     <Balances />

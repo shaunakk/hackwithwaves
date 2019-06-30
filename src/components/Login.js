@@ -105,7 +105,7 @@ class Login extends React.Component {
                 await this.wavesKeeperLogin()
                 auth.authenticate(() => history.push('/wallet'))
             }}
-            >Login as {this.state.type == "investor" ? "an Investor" : "a Hacker"} </Button >
+            >Login as {this.state.type == "advisor" ? "an advisor" : "a Hacker"} </Button >
 
         ))
         return (
@@ -119,14 +119,14 @@ class Login extends React.Component {
                         <Paper className={classes.paper}>
 
                             <RadioGroup
-                                aria-label="Hacker Or Investor"
-                                name="hackerOrInvestor"
+                                aria-label="Hacker Or advisor"
+                                name="hackerOradvisor"
                                 className={classes.group}
                                 value={this.state.type}
                                 onChange={handleChange}
                             >
                                 <FormControlLabel value="hacker" control={<Radio />} label="Hacker" />
-                                <FormControlLabel value="investor" control={<Radio />} label="Investor" />
+                                <FormControlLabel value="advisor" control={<Radio />} label="Advisor" />
                             </RadioGroup>
 
                             <form onSubmit={e => { e.preventDefault(); }} className={classes.form}>
