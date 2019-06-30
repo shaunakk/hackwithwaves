@@ -20,6 +20,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
+
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
 import AlertDialog from './AlertDialog';
@@ -49,7 +51,14 @@ const styles = {
     },
     leftMargin: {
         marginLeft: '10px'
+    },
+    search: {
+        alignItems: "center",
+        margin: '0 auto',
+        justify: "center"
+
     }
+
 
 };
 const theme = createMuiTheme({
@@ -67,16 +76,17 @@ class Home extends React.Component {
         open: false,
         name: "",
         description: "",
-        error:false
+        error: false,
+        search: "",
+        filteredResponse: [],
     }
     refreshProjects() {
         setInterval(() => { this.getProjects() }, 1000);
     }
     handleErrorClose = () => {
-        this.setState({error:false})
+        this.setState({ error: false })
     }
     async createApp() {
-        console.log(this.state.name)
         try {
             const txData = {
                 type: 16,
@@ -98,7 +108,6 @@ class Home extends React.Component {
 
             };
             let data = await window.WavesKeeper.signAndPublishTransaction(txData);
-            console.log(data)
         }
         catch (e) {
             console.log(e);
@@ -107,60 +116,62 @@ class Home extends React.Component {
 
 
 
-    async deleteProject(project,index) {
-        console.log(this.state.name)
-        
+    async deleteProject(project, index) {
+
         try {
-            if(project.value.address == JSON.parse(localStorage.acct).info.account.address){
-            const txData = {
-                type: 16,
+            if (project.value.address == JSON.parse(localStorage.acct).info.account.address) {
+                const txData = {
+                    type: 16,
 
-                data: {
-                    dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
-                    payment: [],
-                    fee: {
-                        "tokens": "0.05",
-                        "assetId": "WAVES"
+                    data: {
+                        dApp: "3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv",
+                        payment: [],
+                        fee: {
+                            "tokens": "0.05",
+                            "assetId": "WAVES"
+                        },
+                        call: {
+                            function: "project",
+                            args: [{ type: "string", value: this.state.filteredResponse[index].key }, { type: "string", value: JSON.stringify({ name: "" }) }]
+                        },
+
                     },
-                    call: {
-                        function: "project",
-                        args: [{ type: "string", value: this.state.projects[index].key }, { type: "string", value: JSON.stringify({ name: "" }) }]
-                    },
-
-                },
 
 
-            };
-            let data = await window.WavesKeeper.signAndPublishTransaction(txData);
-            console.log(data)
-            console.log("done")
-        } else{
-            this.setState({error:true})
-        }
+                };
+                let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+
+            } else {
+                this.setState({ error: true })
+            }
         }
         catch (e) {
-            this.setState({error:true})
+            this.setState({ error: true })
             console.log(e);
         }
     }
     async getProjects() {
+        console.log("start")
         let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
-        console.log(res)
         let filtered = (res.filter(project => {
             try { return JSON.parse(project.value).name != "" }
             catch{ return false }
         }
         )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
-        console.log("FILTERED")
-        console.log(filtered)
+
         this.setState({
-            projects: filtered
+            projects: filtered,
+            filteredResponse: filtered.filter(project =>
+                (project.value.name + project.value.description).toLowerCase().includes(this.state.search.toLowerCase())
+            )
         });
+        console.log(filtered)
     }
 
-    componentDidMount() {
-        this.getProjects();
-        this.refreshProjects();
+    async componentDidMount() {
+        await this.getProjects();
+        await this.refreshProjects();
+        this.setState({ filteredResponse: this.state.projects })
     }
     render() {
         const { classes } = this.props;
@@ -179,6 +190,22 @@ class Home extends React.Component {
         const handleChange3 = (event) => {
             this.setState({ email: event.target.value });
         }
+        const handleChange4 = async (event) => {
+            this.setState({ search: event.target.value });
+            if (event.target.value.length > 1) {
+                let responses = await this.state.projects.filter(project => {
+                    console.log((project.value.name + project.value.description).toLowerCase().includes(event.target.value.toLowerCase())
+                    )
+                    return (project.value.name + project.value.description).toLowerCase().includes(event.target.value.toLowerCase())
+                })
+                this.setState({
+                    filteredResponse: responses
+                })
+                console.log(responses)
+            }
+            else this.setState({ filteredResponse: this.state.projects })
+
+        }
         return (
             <MuiThemeProvider theme={theme}>
 
@@ -187,7 +214,20 @@ class Home extends React.Component {
                     <br />
                     <Button variant="contained" className={classes.leftMargin} color="primary" onClick={handleClickOpen}>
                         Create a Project
-                </Button>
+                    </Button>
+                    <Grid container justify="center" >
+                        <TextField
+                            id="outlined-search-input"
+
+                            label="Search"
+                            type="search"
+                            name="search"
+                            autoComplete="search"
+                            margin="normal"
+                            variant="outlined"
+                            onChange={handleChange4}
+                        />
+                    </Grid>
                     <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
                         <DialogContent>
@@ -204,34 +244,34 @@ class Home extends React.Component {
                                 onChange={handleChange1}
                                 fullWidth
                             />
-                             <Snackbar
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            open={this.state.error}
-                            autoHideDuration={8000}
-                            onClose={this.handleErrorClose}
-                            ContentProps={{
-                                'aria-describedby': 'message-id',
-                            }}
-                            message={
+                            <Snackbar
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                                open={this.state.error}
+                                autoHideDuration={8000}
+                                onClose={this.handleErrorClose}
+                                ContentProps={{
+                                    'aria-describedby': 'message-id',
+                                }}
+                                message={
 
-                                <span id="message-id">Error! You Cannot Delete this Project</span>
-                            }
-                            action={[
+                                    <span id="message-id">Error! You Cannot Delete this Project</span>
+                                }
+                                action={[
 
-                                <IconButton
-                                    key="close"
-                                    aria-label="Close"
-                                    color="inherit"
-                                    className={classes.close}
-                                    onClick={this.handleErrorClose}
-                                >
-                                    <CloseIcon />
-                                </IconButton>,
-                            ]}
-                        />
+                                    <IconButton
+                                        key="close"
+                                        aria-label="Close"
+                                        color="inherit"
+                                        className={classes.close}
+                                        onClick={this.handleErrorClose}
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>,
+                                ]}
+                            />
                             <TextField
                                 margin="dense"
                                 id="description"
@@ -256,7 +296,7 @@ class Home extends React.Component {
                                 Cancel
                         </Button>
                             <Button onClick={async () => {
-                                
+
                                 await this.createApp()
                                 handleClose()
                             }} color="primary">
@@ -266,12 +306,13 @@ class Home extends React.Component {
                     </Dialog>
                     <br />
                     {
-                        this.state.projects.map((project, index) =>
+                        this.state.filteredResponse.map((project, index) =>
                             <div>
                                 <br />
-                                <Card className={classes.card}>
+                                <Card className={classes.card} >
                                     <CardActionArea>
                                         <CardContent>
+
                                             <Typography gutterBottom variant="h5" component="h2">
                                                 {project.value.name}
                                             </Typography>
@@ -281,8 +322,8 @@ class Home extends React.Component {
                                         </CardContent>
                                     </CardActionArea>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={async () => {    
-                                            await this.deleteProject(project,index)
+                                        <Button size="small" color="primary" onClick={async () => {
+                                            await this.deleteProject(project, index)
                                         }}>
                                             Delete
                                         </Button>
