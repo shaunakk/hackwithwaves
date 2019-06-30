@@ -33,6 +33,7 @@ import {
   withRouter
 } from "react-router-dom";
 import { auth } from "./PrivateRoute";
+const { transfer, broadcast } = require('@waves/waves-transactions')
 
 
 const theme = createMuiTheme({
@@ -90,25 +91,26 @@ class Transfer extends React.Component {
     deposit: false,
     advice: "",
     investorName: "",
-    email:"",
-    projectName:"",
+    email: "",
+    projectName: "",
     pending: false,
     assets: [
-      
+
     ],
     confirmTransfer: false,
-    names: ["WAVES","HACK"],
+    names: ["WAVES", "HACK"],
     transactionSuccessful: { success: null, message: "" },
     memo: "",
-    emailWrong:false,
-    done:false,
-    projects:[]
+    emailWrong: false,
+    done: false,
+    projects: [],
+    rewardOpen: false,
   };
   handleCurrencyChange = (e) => {
     this.setState({ currency: e.target.value })
   }
   handleAmountChange = (e) => {
-    this.setState({ investorName : e.target.value })
+    this.setState({ investorName: e.target.value })
   }
   handleMemoChange = (e) => {
     this.setState({ advice: e.target.value })
@@ -132,59 +134,72 @@ class Transfer extends React.Component {
     this.setState({ pending: false });
   }
 
-  async getEmail(){
+  async getEmail() {
 
-    
-        let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
-        console.log(res)
-        let filtered = (res.filter(project => {
-            try { return JSON.parse(project.value).name != "" }
-            catch{ return false }
-        }
-        )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
-        console.log("FILTERED")
-        console.log(filtered)
-        this.setState({
-            projects: filtered
-        });
-    let val = this.state.projects.find(project=>project.value.name==this.state.projectName).value.email
-    if(val==-1){
-        this.setState({emailWrong:true});
-        return false;
+
+    let res = await (await fetch("https://testnodes.wavesnodes.com/addresses/data/3N2SxuEYw6ExBkFAaB5yvHLc526LMsFmiJv")).json();
+    console.log(res)
+    let filtered = (res.filter(project => {
+      try { return JSON.parse(project.value).name != "" }
+      catch{ return false }
+    }
+    )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
+    console.log("FILTERED")
+    console.log(filtered)
+    this.setState({
+      projects: filtered
+    });
+    let val = this.state.projects.find(project => project.value.name == this.state.projectName).value.email
+    if (val == -1) {
+      this.setState({ emailWrong: true });
+      return false;
     }
 
 
-    await this.setState({email:val})
- 
+    await this.setState({ email: val })
+
     console.log(this.state.email)
   }
 
   send = async () => {
     await this.getEmail();
-    if((this.state.email.indexOf("@")!==-1)&&(this.state.email.indexOf(".")!==-1)){
-    window.emailjs
-    .send(
-      "default_service",
-      "send_advice",
-      {
-        investorName: this.state.investorName,
-        projectName:this.state.projectName,
-        email: this.state.email,
-        advice:this.state.advice
-      },
-      "user_9TNj7xNArwLySO7eexAjz"
-    )
-    .then(res => {
-        this.setState({transactionSuccessful:{success: true, message: "success"}})
-      console.log(res);
+    if ((this.state.email.indexOf("@") !== -1) && (this.state.email.indexOf(".") !== -1)) {
+      window.emailjs
+        .send(
+          "default_service",
+          "send_advice",
+          {
+            investorName: this.state.investorName,
+            projectName: this.state.projectName,
+            email: this.state.email,
+            advice: this.state.advice
+          },
+          "user_9TNj7xNArwLySO7eexAjz"
+        )
+        .then(res => {
+          this.setState({ transactionSuccessful: { success: true, message: "success" } })
+          console.log(res);
+          const params = {
+            amount: 300,
+            recipient: JSON.parse(localStorage.acct).info.account.address,
+            feeAssetId: "WAVES",
+            fee: 900000,
+            assetId: "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge",
+          }
 
-    })
-    // Handle errors here however you like
-    .catch(err => {
-        this.setState({transactionSuccessful:{success: false, message: "error"}})
-    });
+          const signedTransferTx = transfer(params, "satoshi hill advance update tongue design recall uniform method fun bone math february phrase little")
+          let response = broadcast(signedTransferTx, "https://testnodes.wavesnodes.com").then(() => {
+            this.setState({ rewardOpen: true })
+          })
+          console.log("You have just been awarded 3 HACKS")
+
+        })
+        // Handle errors here however you like
+        .catch(err => {
+          this.setState({ transactionSuccessful: { success: false, message: "error" } })
+        });
     } else {
-        this.setState({transactionSuccessful:{success: false, message: "error"}})
+      this.setState({ transactionSuccessful: { success: false, message: "error" } })
     }
   }
 
@@ -203,7 +218,10 @@ class Transfer extends React.Component {
         Send Advice to {this.state.projectName}
       </Button>
     ));
+    const handleClose = () => {
+      this.setState({ rewardOpen: false })
 
+    }
     const DepositButton = withRouter(({ history }) => (
       <Button
         fullWidth
@@ -231,7 +249,7 @@ class Transfer extends React.Component {
                 }}
                 className={classes.form}
               >
-               
+
                 <FormControl margin="normal" required fullWidth>
                   <InputLabel htmlFor="amount">Your Name</InputLabel>
                   <Input
@@ -283,7 +301,7 @@ class Transfer extends React.Component {
               <Button onClick={this.handleTransferClose} color="primary">
                 Cancel
           </Button>
-              <Button onClick={() => { this.handleTransferClose(); this.send();  }} color="primary" autoFocus>
+              <Button onClick={() => { this.handleTransferClose(); this.send(); }} color="primary" autoFocus>
                 Confirm
           </Button>
             </DialogActions>
@@ -384,8 +402,31 @@ class Transfer extends React.Component {
               </IconButton>,
             ]}
           />
+          <Dialog
+            open={this.state.rewardOpen}
+            TransitionComponent={Transition}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle id="alert-dialog-slide-title">
+              Reward
+                    </DialogTitle>
+            <DialogContent>
+              <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
+                <p>You have been rewarded 3 HACK for giving advice on a project</p>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+
+              <Button onClick={handleClose} color="primary">
+                OK
+            </Button>
+            </DialogActions>
+          </Dialog>
         </MuiThemeProvider>
       </div>
+
     );
   }
 }

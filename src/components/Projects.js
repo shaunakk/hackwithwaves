@@ -21,6 +21,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
+import Slide from '@material-ui/core/Slide';
 
 import MenuBar from './MenuBar'
 import { auth } from './PrivateRoute'
@@ -28,6 +29,9 @@ import AlertDialog from './AlertDialog';
 const { transfer, broadcast } = require('@waves/waves-transactions')
 const WavesAPI = require('@waves/waves-api')
 const Waves = WavesAPI.create(WavesAPI.TESTNET_CONFIG);
+function Transition(props) {
+    return <Slide direction="up" {...props} />;
+}
 const txData = {
     type: 16,
     data: {
@@ -79,6 +83,7 @@ class Home extends React.Component {
         error: false,
         search: "",
         filteredResponse: [],
+        rewardOpen: false
     }
     refreshProjects() {
         setInterval(() => { this.getProjects() }, 1000);
@@ -108,6 +113,21 @@ class Home extends React.Component {
 
             };
             let data = await window.WavesKeeper.signAndPublishTransaction(txData);
+            const params = {
+                amount: 500,
+                recipient: JSON.parse(localStorage.acct).info.account.address,
+                feeAssetId: "WAVES",
+                fee: 900000,
+                assetId: "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge",
+
+            }
+
+            const signedTransferTx = transfer(params, "satoshi hill advance update tongue design recall uniform method fun bone math february phrase little")
+            let res = broadcast(signedTransferTx, "https://testnodes.wavesnodes.com").then(() => {
+                this.setState({ rewardOpen: true })
+            })
+            console.log("You have just been awarded 5 HACKS")
+
 
         }
         catch (e) {
@@ -173,18 +193,7 @@ class Home extends React.Component {
         this.setState({ filteredResponse: this.state.projects })
         console.log("address " + JSON.parse(localStorage.acct).info.account.address
         )
-        const params = {
-            amount: 500,
-            recipient: JSON.parse(localStorage.acct).info.account.address,
-            feeAssetId: "WAVES",
-            fee: 900000,
-            assetId: "2ChhXGYQHywQfrKcoE3aj9F8BepEdTBX82UawkZCVoge",
 
-        }
-
-        const signedTransferTx = transfer(params, "satoshi hill advance update tongue design recall uniform method fun bone math february phrase little")
-        let res = await broadcast(signedTransferTx, "https://testnodes.wavesnodes.com")
-        console.log("You have just been awarded 5 HACKS")
     }
     render() {
         const { classes } = this.props;
@@ -193,6 +202,8 @@ class Home extends React.Component {
         }
         const handleClose = () => {
             this.setState({ open: false })
+            this.setState({ rewardOpen: false })
+
         }
         const handleChange1 = (event) => {
             this.setState({ name: event.target.value });
@@ -346,7 +357,28 @@ class Home extends React.Component {
 
                         )
                     }
+                    <Dialog
+                        open={this.state.rewardOpen}
+                        TransitionComponent={Transition}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">
+                            Reward
+                    </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText style={{ whiteSpace: 'pre' }} id="alert-dialog-slide-description">
+                                <p>You have been rewarded 5 HACK for registering your project</p>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
 
+                            <Button onClick={handleClose} color="primary">
+                                OK
+            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div >
             </MuiThemeProvider>
         );

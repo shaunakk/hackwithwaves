@@ -152,11 +152,10 @@ class Home extends React.Component {
             catch{ return false }
         }
         )).map(project => { return { key: project.key, value: JSON.parse(project.value) } })
-        console.log("FILTERED")
-        console.log(filtered)
         this.setState({
             projects: filtered
         });
+        
     }
 
     componentDidMount() {
