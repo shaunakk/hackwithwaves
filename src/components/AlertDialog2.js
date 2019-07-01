@@ -89,7 +89,7 @@ class AlertDialog extends React.Component {
         return (
             <div>
                 <Button size='small' onClick={this.handleClickOpen} color="primary">
-                    View Project
+                    View Profile
                 </Button>
                   <Button size='small' onClick={async () => {
                                 this.setState({openEmail:true})
