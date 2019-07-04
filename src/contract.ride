@@ -1,0 +1,33 @@
+{-# STDLIB_VERSION 3 #-}
+{-# CONTENT_TYPE DAPP #-}
+{-# SCRIPT_TYPE ACCOUNT #-}
+
+
+
+#@Callable(i)
+func CanVote(i: Invocation) = {
+     let votersList = getString(this, "voters").extract()
+    if (votersList.indexOf(i.callerPublicKey.toBase58String()).extract() != -1) then{ 
+        true
+    }else{
+        throw("You can not vote because you are not in the list of voters!")
+    }
+}
+
+@Callable(i)
+func project(type : String, body:String) = {
+    WriteSet([
+        DataEntry(type, body)
+    ])
+   
+}
+
+@Callable(i)
+func vote(theVote: String, name:String) = {
+
+    if(!CanVote(i))
+        then throw("Not Allowed to Vote")
+    else
+            WriteSet([DataEntry(name+" Votes", theVote)])
+
+}
